@@ -1,17 +1,26 @@
-package com.example.lab08;
+package com.example.lab08.controller;
 
+import com.example.lab08.entity.Employee;
+import com.example.lab08.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class HomeController {
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
     @GetMapping("/Lab8/")
-    public String home() {
+    public String home(Model model) {
+        List<Employee> employees = employeeRepository.findAll(Sort.by(Sort.Order.asc("id")));
+        model.addAttribute("employees", employees);
         return "index";
     }
-
     @GetMapping("/Lab8/contact")
     public String showContactForm() {
         return "contact";
