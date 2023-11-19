@@ -44,7 +44,6 @@
 				</tr>
 				</thead>
 				<tbody>
-				<!-- Thymeleaf loop to iterate over employees -->
 				<tr th:each="employee : ${employees}">
 					<td>
                         <span class="custom-checkbox">
@@ -109,26 +108,43 @@
 			}
 		});
 
-		// Xử lý sự kiện khi nhấn nút "Delete Selected"
 		$("#deleteSelected").click(function () {
 			var selectedIds = [];
 
 			// Lấy id của những checkbox được chọn
 			$('table tbody input[type="checkbox"]:checked').each(function () {
-				var employeeId = $(this).closest('tr').find('td:eq(1)').text().trim(); // Sửa đổi tại đây để lấy ID từ cột thứ hai (index 1)
+				var employeeId = $(this).closest('tr').find('td:eq(1)').text().trim();
 				selectedIds.push(employeeId);
 			});
-
-			// Thực hiện xóa từng nhân viên
-			selectedIds.forEach(function (id) {
-				deleteEmployee(id);
-			});
-
-			// Refresh trang sau khi xóa
-			location.reload();
+			if (selectedIds.length > 0) {
+				deleteSelectedEmployees(selectedIds);
+			} else {
+				alert("Please select at least one employee to delete.");
+			}
 		});
 	});
-
+	function deleteSelectedEmployees(selectedIds) {
+		var deletePromises = selectedIds.map(function (id) {
+			return new Promise(function (resolve, reject) {
+				$.ajax({
+					type: "POST",
+					url: "/Lab8/delete/" + id,
+					contentType: "application/json; charset=utf-8",
+					success: function (response) {
+						console.log(response);
+						resolve();
+					},
+					error: function (error) {
+						console.log(error);
+						reject();
+					}
+				});
+			});
+		});
+		Promise.all(deletePromises).then(function () {
+			location.reload();
+		});
+	}
 	function deleteEmployee(id) {
 		$.ajax({
 			type: "POST",
@@ -147,6 +163,8 @@
 		var employeeId = $(element).data('id');
 		window.location.href = '/Lab8/edit/' + employeeId;
 	}
+</script>
+
 
 
 </script>

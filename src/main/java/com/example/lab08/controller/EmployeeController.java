@@ -60,7 +60,6 @@ public class EmployeeController {
     @Transactional
     @ResponseBody
     public String deleteMultipleEmployees(@RequestBody List<Long> employeeIds) {
-        // Xử lý xóa nhiều nhân viên theo danh sách ID
         for (Long employeeId : employeeIds) {
             employeeRepository.deleteById(employeeId);
         }
